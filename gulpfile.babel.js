@@ -45,14 +45,15 @@ function Browserify(watch){
         entries: ['./app/js/app.js'],
         cache: {},
         packageCache: {},
-        fullPaths: true
+        fullPaths: true,
+        debug:true
     }).transform(babelify));
     
     function rebundle(){
         return b.bundle()
-                .on('error',function(err){console.log(err)})
                 .pipe(source('app.js'))
                 .pipe(gulp.dest(paths.build.js))
+                .on('error',function(err){console.log(err)})
                 .on('end',function(){
                 });
     }
@@ -63,7 +64,7 @@ function Browserify(watch){
         })
     }
 
-    return rebundle(b);
+    return rebundle();
 }
 
 function BrowserSync(){
@@ -113,6 +114,8 @@ function Sass(){
 }
 
 // Task Partition
+
+gulp.task('build', gulp.series(Browserify,Sass));
 
 // Stylesheet
 gulp.task('watch:styles',() => {

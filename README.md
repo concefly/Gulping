@@ -1,1 +1,5 @@
-### Init gulp task
+### Ready
+
+bower install & npm install
+
+

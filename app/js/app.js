@@ -1,4 +1,8 @@
 import hello from './hello.js';
 
-let hello2 = 'ok7';
-console.log(hello);
+let [a,b,c] = [1,2,3];
+
+[a,b,c].map(function(i){
+    console.log(i);
+});
+
