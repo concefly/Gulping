@@ -1,0 +1,35 @@
+{
+  "name": "gulping",
+  "version": "1.0.0",
+  "description": "gulping for front-end tool",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "gulp watch"
+  },
+  "keywords": [
+    "gulp"
+  ],
+  "author": "lluvio",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-core": "^5.8.25",
+    "babelify": "^6.3.0",
+    "browser-sync": "^2.9.3",
+    "browserify": "^11.1.0",
+    "gulp": "gulpjs/gulp#4.0",
+    "gulp-cdnizer": "^1.1.6",
+    "gulp-cli": "gulpjs/gulp-cli#4.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-grep": "^0.2.0",
+    "gulp-plumber": "^1.0.1",
+    "gulp-sass": "^2.0.4",
+    "gulp-sourcemaps": "^1.5.2",
+    "gulp-using": "0.0.1",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.4.0"
+  },
+  "repository": {
+      "type" : "git",
+      "url" : "git@github.com:Lluvio/Gulping.git"
+  }
+}

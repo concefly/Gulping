@@ -1,0 +1,22 @@
+{
+  "name": "gulping",
+  "version": "0.0.1",
+  "authors": [
+    "lluvio <caotousir@gmail.com>"
+  ],
+  "description": "h5init",
+  "keywords": [
+    "gulp"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "jquery": "~2.1.4"
+  }
+}
