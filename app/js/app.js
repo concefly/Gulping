@@ -1,8 +1,4 @@
-import hello from './hello.js';
+import {test , test2}from './destructuring.js';
 
-let [a,b,c] = [1,2,3];
-
-[a,b,c].map(function(i){
-    console.log(i);
-});
-
+test();
+test2();

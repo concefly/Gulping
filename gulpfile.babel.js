@@ -7,6 +7,9 @@ import grep from 'gulp-grep';
 import using from 'gulp-using';
 import concat from 'gulp-concat';
 import source from 'vinyl-source-stream';
+import buffer from 'vinyl-buffer';
+// import uglify from 'gulp-uglify';
+import assign from 'lodash.assign';
 
 // style 
 import sass from 'gulp-sass';
@@ -19,6 +22,8 @@ import watchify from 'watchify';
 
 // es6 transform
 import babelify from 'babelify';
+
+let reload = browsersync.reload;
 
 let paths = {
     dirs: {
@@ -39,29 +44,38 @@ let paths = {
     cdnURL: './'
 };
 
-function Browserify(watch){
 
-    let b = watchify(browserify({
+function Browserify(){
+    let customOpts = {
         entries: ['./app/js/app.js'],
         cache: {},
         packageCache: {},
         fullPaths: true,
+        insertGlobals: true,
         debug:true
-    }).transform(babelify));
-    
-    function rebundle(){
-        return b.bundle()
-                .pipe(source('app.js'))
-                .pipe(gulp.dest(paths.build.js))
-                .on('error',function(err){console.log(err)})
-                .on('end',function(){
-                });
-    }
+    };
 
-    if(watch){
-        b.on('update',function(){
-            rebundle();
-        })
+
+    let opts = assign({}, watchify.args, customOpts);
+    let b = watchify(browserify(opts));
+    
+    b.on('update',rebundle);
+
+    function rebundle(){
+            return b.transform(babelify.configure({
+                      sourceMapRelative: './maps'
+                    }))
+                    .bundle()
+                    .on('error',(err) => {console.log(err)})
+                    .pipe(source('app.js'))
+                    .pipe(buffer())
+                    .pipe(sourcemaps.init({loadMaps:true}))
+                    .pipe(sourcemaps.write('./maps'))
+                    .pipe(gulp.dest(paths.build.js))
+                    .pipe(browsersync.stream())   // 把修改过的文件 输出到 console
+                    .on('end',() => {
+                        reload();
+                    });
     }
 
     return rebundle();
@@ -75,9 +89,8 @@ function BrowserSync(){
             },
             proxy: '',
             port: 4000,
-            files: [paths.dirs.app + '/**/*.scss',
-                     paths.dirs.app + '/**/*.js'],
             browser: ['google chrome']
+            // open: false
         })
     );
 }
@@ -115,21 +128,22 @@ function Sass(){
 
 // Task Partition
 
-gulp.task('build', gulp.series(Browserify,Sass));
+gulp.task('build', gulp.series(Browserify));
 
 // Stylesheet
 gulp.task('watch:styles',() => {
-    gulp.watch(paths.app.sass , Sass);
+    gulp.watch(paths.build.css, Sass);
     //expend for less ...
 })
 
 // Javascript file 
 gulp.task('watch:js',() => {
-    gulp.watch(paths.app.js , Browserify);
+    gulp.watch(paths.build.js , Browserify);
 })
 
 // Cdn 
 gulp.task('cdnizer',Cdnizer);
 
 // Finally watch
-gulp.task('watch', gulp.parallel([BrowserSync,'watch:styles','watch:js']));
+
+gulp.task('watch', gulp.series('build',gulp.parallel('watch:styles','watch:js',BrowserSync)));
