@@ -17,6 +17,7 @@
     "browser-sync": "^2.9.3",
     "browserify": "^11.1.0",
     "gulp": "gulpjs/gulp#4.0",
+    "gulp-autoprefixer": "^3.0.2",
     "gulp-cdnizer": "^1.1.6",
     "gulp-cli": "gulpjs/gulp-cli#4.0",
     "gulp-concat": "^2.6.0",
@@ -30,7 +31,8 @@
     "react": "^0.13.3",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
-    "watchify": "^3.4.0"
+    "watchify": "^3.4.0",
+    "webpack": "^1.12.2"
   },
   "repository": {
     "type": "git",

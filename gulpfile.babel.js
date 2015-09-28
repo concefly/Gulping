@@ -10,11 +10,12 @@ import source from 'vinyl-source-stream';
 import buffer from 'vinyl-buffer';
 // import uglify from 'gulp-uglify';
 import assign from 'lodash.assign';
+import sourcemaps from 'gulp-sourcemaps';
 
 // style 
 import sass from 'gulp-sass';
 import plumber from 'gulp-plumber'; // when we met sass errors , made gulp work continue 
-import sourcemaps from 'gulp-sourcemaps';
+import autoprefixer from 'gulp-autoprefixer';
 
 // js browserify
 import browserify from 'browserify';
@@ -46,6 +47,7 @@ let paths = {
 
 
 function Browserify(){
+    
     let customOpts = {
         entries: ['./app/js/app.js'],
         cache: {},
@@ -55,16 +57,13 @@ function Browserify(){
         debug:true
     };
 
-
     let opts = assign({}, watchify.args, customOpts);
     let b = watchify(browserify(opts));
     
     b.on('update',rebundle);
 
     function rebundle(){
-            return b.transform(babelify.configure({
-                      sourceMapRelative: './maps'
-                    }))
+            return b.transform(babelify)
                     .bundle()
                     .on('error',(err) => {console.log(err)})
                     .pipe(source('app.js'))
@@ -72,7 +71,7 @@ function Browserify(){
                     .pipe(sourcemaps.init({loadMaps:true}))
                     .pipe(sourcemaps.write('./maps'))
                     .pipe(gulp.dest(paths.build.js))
-                    .pipe(browsersync.stream())   // 把修改过的文件 输出到 console
+                    // .pipe(browsersync.stream())   // 把修改过的文件 输出到 console,并reload
                     .on('end',() => {
                         reload();
                     });
@@ -117,22 +116,26 @@ function Sass(){
     return (
             gulp.src(paths.app.sass)
                 .pipe(plumber())
-                .pipe(using({ prefix: 'After changed:' }))
+                // .pipe(using({ prefix: 'After changed:' }))
                 .pipe(sourcemaps.init())
                 .pipe(sass())
+                .pipe(autoprefixer({
+                    browser: ['last 2 versions'],
+                    cascade: false
+                }))
                 .pipe(sourcemaps.write('./maps'))
                 .pipe(gulp.dest(paths.build.css))
-                .pipe(grep('**/*.css', { read: false , dot: true}))
+                // .pipe(grep('**/*.css', { read: false , dot: true}))
      );
 }
 
 // Task Partition
 
-gulp.task('build', gulp.series(Browserify));
+gulp.task('build', gulp.series(Browserify,Sass));
 
 // Stylesheet
 gulp.task('watch:styles',() => {
-    gulp.watch(paths.build.css, Sass);
+    gulp.watch(paths.app.sass, gulp.series(Sass, reload));
     //expend for less ...
 })
 
@@ -144,6 +147,7 @@ gulp.task('watch:js',() => {
 // Cdn 
 gulp.task('cdnizer',Cdnizer);
 
-// Finally watch
+//If need , there must has a clean task 
 
+// Finally watch
 gulp.task('watch', gulp.series('build',gulp.parallel('watch:styles','watch:js',BrowserSync)));
