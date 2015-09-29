@@ -1,14 +1,51 @@
 import React from 'react';
-import {test , test2} from './destructuring.js';
-import {s1 ,template ,template2} from './string.js';
-import { elearr } from './array.js';
-import { App } from './reactDemo.js';
+import Router from 'react-router';
 
-// test();
-// test2();
+// let Route = Router.Route;;
+// let RouteHandler = Router.RouteHandler;
+let {Route , RouteHandler , Link} = Router;
 
-// s1();
-template('div');
-template2();
+class App extends React.Component{
+    render(){
+        return(
+                <div>
+                    <h1>App</h1>
+                    <nav>
+                        <li><Link to='about'>about</Link></li>
+                        <li><Link to='blogs'>blogs</Link></li>
+                    </nav>
+                    <RouteHandler/>
+                </div>
+              )
+    }
+}
 
-React.render(<App/>, document.getElementById('app'));
+class About extends React.Component{
+    render(){
+        return(
+                <div>
+                    About
+                </div>
+              )
+    }
+}
+
+class Blogs extends React.Component{
+    render(){
+        return(
+                <div>
+                    Blogs
+                </div>
+              )
+    }
+}
+let routes = (
+        <Route handler={App}>
+            <Route name='about' path='about' handler={About}/>
+            <Route name='blogs' path='blogs' handler={Blogs}/>
+        </Route>
+);
+
+Router.run(routes , Router.HashLocation, (Root) => {
+    React.render(<Root /> ,document.body);
+})

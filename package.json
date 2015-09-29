@@ -29,6 +29,7 @@
     "gulp-using": "0.0.1",
     "lodash.assign": "^3.2.0",
     "react": "^0.13.3",
+    "react-router": "^0.13.3",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.4.0",
